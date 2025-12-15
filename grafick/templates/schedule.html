@@ -1,24 +1,33 @@
 {% extends 'base.html' %}
-{% block title %}График{% endblock %}
+{% block title %}График дежурств{% endblock %}
+
 {% block content %}
 <h3>График дежурств</h3>
-<table class="table table-bordered">
+
+<table class="table table-bordered text-center">
 <thead class="table-light">
 <tr>
-    <th>День</th>
-    {% for post in posts[1:] %}<th>{{post}}</th>{% endfor %}
+    <th>Фамилия</th>
+    {% for d in days %}
+        <th>{{ d }}</th>
+    {% endfor %}
 </tr>
 </thead>
 <tbody>
-{% for day, data in schedule.items() %}
+{% for person, pdata in schedule.items() %}
 <tr>
-    <td><b>{{day}}</b></td>
-    {% for post in posts[1:] %}
-        <td>{{ data[post] }}</td>
+    <td><b>{{ person }}</b></td>
+    {% for d in days %}
+        <td>
+            {% if d in pdata %}
+                {{ pdata[d] }}
+            {% endif %}
+        </td>
     {% endfor %}
 </tr>
 {% endfor %}
 </tbody>
 </table>
+
 <a href="/" class="btn btn-secondary">Назад</a>
 {% endblock %}
