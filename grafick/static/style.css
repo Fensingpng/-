@@ -1,5 +1,221 @@
-table th {
+/* === ОБЩИЕ СТИЛИ СТРАНИЦЫ === */
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+.container.card {
+    background-color: #1e1e1e;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+h3 {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.form-label {
+    color: #bbbbbb;
+    font-weight: 500;
+}
+
+.form-control,
+.form-select {
+    background-color: #2d2d2d;
+    border: 1px solid #444444;
+    color: #ffffff;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: #2d2d2d;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    color: #ffffff;
+}
+
+/* === КНОПКИ === */
+.btn-primary {
+    background-color: #5f0002;
+    border-color: #ffffff;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: #8a0003;
+    border-color: #ffffff;
+}
+
+.btn-lg {
+    padding: 12px 32px;
+    font-size: 1.1rem;
+}
+
+/* === ТАБЛИЦА === */
+.table-responsive {
+    overflow: auto;
+    max-height: 700px;
+    border-radius: 12px;
+}
+
+table.table {
+    background-color: #212529;
+    color: #f8f9fa;
+    border-collapse: separate;
+    border-spacing: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    margin-bottom: 0;
+}
+
+/* Скруглённые углы таблицы */
+table.table thead tr th:first-child {
+    border-top-left-radius: 12px;
+}
+table.table thead tr th:last-child {
+    border-top-right-radius: 12px;
+}
+
+/* === ФИКСИРОВАННЫЕ СТРОКИ И СТОЛБЦЫ === */
+
+/* Верхняя строка (дни) — фиксируем сверху */
+table thead th {
     position: sticky;
     top: 0;
-    background: #fff;
+    background: #343a40 !important;
+    color: #ffffff !important;
+    z-index: 20;
+    border-bottom: none;
+}
+
+/* Первый столбец — Фамилия */
+table th:first-child,
+table td:first-child {
+    position: sticky;
+    left: 0;
+    background-color: #2d2d2d !important;
+    z-index: 15;
+    border-right: 2px solid #495057;
+    min-width: 150px;
+    width: 150px;
+}
+
+table td:first-child {
+    font-weight: bold;
+    color: #ffffff;
+}
+
+/* Второй столбец — Предпочитаемый пост */
+table th:nth-child(2),
+table td:nth-child(2) {
+    position: sticky;
+    left: 150px;                    /* Ровно ширина первого столбца */
+    background-color: #2d2d2d !important;
+    z-index: 15;
+    border-right: 2px solid #495057;
+    min-width: 180px;
+    width: 180px;
+}
+
+table td:nth-child(2) select {
+    background-color: #2d2d2d;
+    color: #ffffff;
+}
+
+/* Угловые ячейки (пересечение фиксированных строк и столбцов) */
+table thead th:first-child,
+table thead th:nth-child(2) {
+    z-index: 25 !important;
+    background: #343a40 !important;
+}
+
+/* Тень при прокрутке вправо */
+table td:first-child,
+table td:nth-child(2) {
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* === ЯЧЕЙКИ ДНЕЙ И ПОСТЫ === */
+td.day-col {
+    text-align: center;
+    vertical-align: middle;
+    min-width: 50px;
+    height: 50px;
+}
+
+td.empty-day {
+    background-color: #343a40;
+}
+
+.post-1 {
+    background-color: #0d6efd;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 6px 12px;
+    display: inline-block;
+    min-width: 80px;
+}
+.post-2 {
+    background-color: #198754;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 6px 12px;
+    display: inline-block;
+    min-width: 80px;
+}
+.post-3 {
+    background-color: #ffc107;
+    color: #212529;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 6px 12px;
+    display: inline-block;
+    min-width: 80px;
+}
+
+/* Чекбоксы */
+input[type="checkbox"] {
+    transform: scale(1.4);
+    accent-color: #0d6efd;
+}
+
+/* === АНИМАЦИЯ ЗАГРУЗКИ === */
+.loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.loading-overlay.active {
+    display: flex;
+}
+
+.spinner {
+    width: 70px;
+    height: 70px;
+    border: 8px solid #333;
+    border-top: 8px solid #0d6efd;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-overlay p {
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-top: 20px;
+    color: white;
 }

@@ -17,7 +17,7 @@ def inject_globals():
 @app.route('/', methods=['GET', 'POST'])
 def index():
     schedule = None
-
+    people_data = None
     month = int(request.form.get('month', 1))
     year = int(request.form.get('year', 2025))
 
@@ -28,7 +28,7 @@ def index():
         people_data = {}
 
         for p in PEOPLE:
-            pref = request.form.get(f'post_{p}')
+            pref = request.form.get(f'post_{p}', 'Нет предпочтения')
             blocked = [d for d in days if request.form.get(f'block_{p}_{d}')]
 
             people_data[p] = {
@@ -43,9 +43,9 @@ def index():
         days=days,
         schedule=schedule,
         month=month,
-        year=year
+        year=year,
+        people_data=people_data  # ← важно для сохранения выбранных предпочтений
     )
-
 
 if __name__ == '__main__':
     app.run(debug=True)

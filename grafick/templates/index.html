@@ -2,112 +2,75 @@
 {% block title %}Настройка дежурств{% endblock %}
 
 {% block content %}
-<h3>Настройка дежурств</h3>
+<h3 class="mb-4">Настройка дежурств</h3>
 
 <form method="post">
-
-<div class="row mb-3">
-    <div class="col-3">
-        <label>Месяц</label>
-        <select id="month" name="month" class="form-select">
-            {% for i, m in [
-                (1,'Январь'),(2,'Февраль'),(3,'Март'),(4,'Апрель'),
-                (5,'Май'),(6,'Июнь'),(7,'Июль'),(8,'Август'),
-                (9,'Сентябрь'),(10,'Октябрь'),(11,'Ноябрь'),(12,'Декабрь')
-            ] %}
-            <option value="{{ i }}" {% if i == month %}selected{% endif %}>
-                {{ m }}
-            </option>
-            {% endfor %}
-        </select>
+    <div class="row mb-4">
+        <div class="col-3">
+            <label class="form-label">Месяц</label>
+            <select id="month" name="month" class="form-select">
+                {% for i, m in [(1,'Январь'),(2,'Февраль'),(3,'Март'),(4,'Апрель'),(5,'Май'),(6,'Июнь'),(7,'Июль'),(8,'Август'),(9,'Сентябрь'),(10,'Октябрь'),(11,'Ноябрь'),(12,'Декабрь')] %}
+                    <option value="{{ i }}" {% if i == month %}selected{% endif %}>{{ m }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-3">
+            <label class="form-label">Год</label>
+            <input name="year" class="form-control" value="{{ year }}">
+        </div>
     </div>
 
-    <div class="col-3">
-        <label>Год</label>
-        <input name="year" class="form-control" value="{{ year }}">
+    <div class="table-responsive" style="max-height: 700px; overflow: auto;">
+        <table class="table table-bordered table-dark table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 150px;">Фамилия</th>
+                    <th style="width: 180px;">Предпочитаемый пост</th>
+                    {% for d in days %}
+                        <th class="day-col">{{ d }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in people %}
+                <tr data-person="{{ p }}">
+                    <td><b>{{ p }}</b></td>
+                    <td>
+                        <select name="post_{{ p }}" class="form-select" {% if schedule %}disabled{% endif %}>
+                            {% for post in posts %}
+                                <option value="{{ post }}"
+                                    {% if people_data and people_data[p]['pref'] == post %}selected{% endif %}>
+                                    {{ post }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    {% for d in days %}
+                        <td class="day-col {% if schedule and d not in schedule[p] %}empty-day{% endif %}">
+                            {% if schedule and d in schedule[p] %}
+                                <span class="post-{{ schedule[p][d] }}">
+                                    {{ posts[schedule[p][d]] }}
+                                </span>
+                            {% else %}
+                                {% if not schedule %}
+                                    <input type="checkbox" name="block_{{ p }}_{{ d }}">
+                                {% endif %}
+                                <!-- После генерации — пусто, если не назначен -->
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-</div>
 
-
-<div class="table-responsive" style="max-height:600px">
-<table class="table table-bordered">
-<thead class="table-light">
-<tr>
-    <th>Фамилия</th>
-    <th>Пост</th>
-    {% for d in days %}
-        <th class="day-col">{{ d }}</th>
-    {% endfor %}
-</tr>
-</thead>
-
-<tbody>
-{% for p in people %}
-<tr data-person="{{ p }}">
-    <td><b>{{ p }}</b></td>
-
-    <td>
-        <select name="post_{{ p }}" class="form-select">
-            {% for post in posts %}
-                <option {% if schedule %}disabled{% endif %}>{{ post }}</option>
-            {% endfor %}
-        </select>
-    </td>
-
-    {% for d in days %}
-    <td class="text-center day-col">
-        {% if schedule and d in schedule[p] %}
-            <b>{{ posts[schedule[p][d]] }}</b>
-        {% else %}
-            <input type="checkbox" name="block_{{ p }}_{{ d }}">
-        {% endif %}
-    </td>
-    {% endfor %}
-</tr>
-{% endfor %}
-</tbody>
-</table>
-</div>
-
-<button class="btn btn-primary mt-3">Сгенерировать</button>
+    <button class="btn btn-primary mt-4">Сгенерировать график</button>
 </form>
 
-
 <script>
-const monthSelect = document.getElementById('month');
-const yearInput = document.querySelector('input[name="year"]');
-
-function daysInMonth(month, year) {
-    return new Date(year, month, 0).getDate();
-}
-
-monthSelect.addEventListener('change', updateDays);
-yearInput.addEventListener('change', updateDays);
-
-function updateDays() {
-    const month = parseInt(monthSelect.value);
-    const year = parseInt(yearInput.value);
-    const days = daysInMonth(month, year);
-
-    document.querySelectorAll('.day-col').forEach(el => el.remove());
-
-    const headerRow = document.querySelector('thead tr');
-    for (let d = 1; d <= days; d++) {
-        const th = document.createElement('th');
-        th.className = 'day-col';
-        th.textContent = d;
-        headerRow.appendChild(th);
-    }
-
-    document.querySelectorAll('tbody tr').forEach(row => {
-        for (let d = 1; d <= days; d++) {
-            const td = document.createElement('td');
-            td.className = 'text-center day-col';
-            td.innerHTML = `<input type="checkbox" name="block_${row.dataset.person}_${d}">`;
-            row.appendChild(td);
-        }
-    });
-}
+    // Этот скрипт больше не нужен для динамического обновления таблицы,
+    // потому что при смене месяца/года страница перезагружается (или можно оставить, но он сломается после генерации).
+    // Если хочешь динамику без перезагрузки — скажи, сделаю отдельно.
 </script>
-
 {% endblock %}
